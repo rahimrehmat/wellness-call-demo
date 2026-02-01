@@ -1,0 +1,45 @@
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+*.env
+
+# OpenClaw config with real credentials
+openclaw.yaml
+openclaw.yml
+
+# Real patient profiles (contain PII)
+MEMORY.md
+memory/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Node
+node_modules/
+npm-debug.log
+
+# Temp files
+*.tmp
+*.temp
+.cache/
+
+# Call recordings (if any)
+recordings/
+*.mp3
+*.wav
+*.m4a
+
+# ngrok config
+ngrok.yml

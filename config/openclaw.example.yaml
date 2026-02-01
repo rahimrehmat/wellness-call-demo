@@ -1,0 +1,120 @@
+# OpenClaw Configuration for Wellness Calls
+# 
+# Copy this file to ~/.openclaw/openclaw.yaml and fill in your credentials.
+# NEVER commit this file with real credentials!
+#
+# Required accounts:
+# - Twilio (https://www.twilio.com/)
+# - OpenAI (https://platform.openai.com/)
+# - Anthropic (https://www.anthropic.com/)
+# - ElevenLabs (https://elevenlabs.io/)
+
+# =============================================================================
+# AUTHENTICATION PROFILES
+# =============================================================================
+# Define your API credentials here. Use environment variables for security.
+
+auth:
+  profiles:
+    # Anthropic Claude - for generating conversational responses
+    anthropic:
+      provider: anthropic
+      apiKey: "${ANTHROPIC_API_KEY}"
+    
+    # OpenAI - for speech-to-text (Realtime API)
+    openai:
+      provider: openai
+      apiKey: "${OPENAI_API_KEY}"
+    
+    # ElevenLabs - for text-to-speech
+    elevenlabs:
+      provider: elevenlabs
+      apiKey: "${ELEVENLABS_API_KEY}"
+
+# =============================================================================
+# MODEL CONFIGURATION
+# =============================================================================
+
+model: anthropic/claude-sonnet-4-20250514  # Default model for conversations
+
+# =============================================================================
+# PLUGINS
+# =============================================================================
+
+plugins:
+  # -------------------------------------------------------------------------
+  # Voice Call Plugin
+  # -------------------------------------------------------------------------
+  # This enables outbound phone calls via Twilio with AI conversation.
+  
+  - name: voice-call
+    config:
+      # Twilio Configuration
+      # Get these from: https://console.twilio.com/
+      provider: twilio
+      accountSid: "${TWILIO_ACCOUNT_SID}"
+      authToken: "${TWILIO_AUTH_TOKEN}"
+      
+      # Your Twilio phone number (must be purchased/verified)
+      # Format: +1XXXXXXXXXX (E.164)
+      fromNumber: "+1XXXXXXXXXX"
+      
+      # Default recipient (optional - can be overridden per call)
+      # defaultTo: "+1XXXXXXXXXX"
+      
+      # Webhook Tunnel
+      # ngrok exposes your local server to the internet for Twilio webhooks
+      # Alternatives: localtunnel, cloudflare tunnel
+      tunnelProvider: ngrok
+      
+      # Speech-to-Text Provider
+      # Converts the caller's voice to text in real-time
+      sttProvider: openai-realtime
+      
+      # Language Model for Responses
+      # This model generates the AI's conversational responses
+      # Must match an auth profile above
+      responseModel: anthropic/claude-sonnet-4-20250514
+      
+      # Text-to-Speech Provider & Voice
+      # Converts AI responses to natural speech
+      ttsProvider: elevenlabs
+      
+      # ElevenLabs Voice ID
+      # Browse voices: https://elevenlabs.io/voice-library
+      # Popular options:
+      #   - Rachel (warm, friendly): 21m00Tcm4TlvDq8ikWAM
+      #   - Adam (calm, professional): pNInz6obpgDQGcFmaJgB
+      #   - Bella (soft, gentle): EXAVITQu4vr4xnSDxMaL
+      ttsVoice: "21m00Tcm4TlvDq8ikWAM"
+      
+      # ElevenLabs Model
+      # eleven_flash_v2_5 - Fast, good quality (recommended)
+      # eleven_multilingual_v2 - Better quality, slower
+      ttsModel: "eleven_flash_v2_5"
+
+  # -------------------------------------------------------------------------
+  # Telegram Channel (Optional)
+  # -------------------------------------------------------------------------
+  # Enables triggering calls via Telegram messages
+  
+  # - name: telegram
+  #   config:
+  #     botToken: "${TELEGRAM_BOT_TOKEN}"
+  #     allowedUsers:
+  #       - "YOUR_TELEGRAM_USER_ID"
+
+# =============================================================================
+# ENVIRONMENT VARIABLES REFERENCE
+# =============================================================================
+# 
+# Set these in your shell or .env file:
+#
+# export TWILIO_ACCOUNT_SID="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+# export TWILIO_AUTH_TOKEN="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+# export OPENAI_API_KEY="sk-..."
+# export ANTHROPIC_API_KEY="sk-ant-..."
+# export ELEVENLABS_API_KEY="..."
+# export TELEGRAM_BOT_TOKEN="123456:ABC-DEF..." (optional)
+#
+# =============================================================================
