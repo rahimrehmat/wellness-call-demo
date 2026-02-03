@@ -1085,7 +1085,7 @@ plugins:
       accountSid: "ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
       authToken: "${TWILIO_AUTH_TOKEN}"
       fromNumber: "+1YYYYYYYYY"
-      defaultTo: "+16043399783"
+      defaultTo: "+1XXXXXXXXXX"
       
       # Webhook Tunnel
       tunnelProvider: ngrok
@@ -1330,6 +1330,51 @@ plugins:
 
 ---
 
+## Transcript & Logging System
+
+For detailed documentation on the transcript and logging system, see **[transcripts.md](transcripts.md)**.
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    TRANSCRIPT PROCESSING PIPELINE                            │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│   DATA FLOW                                                                 │
+│   ═════════                                                                 │
+│                                                                             │
+│   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐ │
+│   │  Voice Call │───▶│ calls.jsonl │───▶│  Processor  │───▶│  Markdown   │ │
+│   │  Completes  │    │   (raw)     │    │   Script    │    │ Transcripts │ │
+│   └─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘ │
+│                                                │                           │
+│                                                │                           │
+│                                                ▼                           │
+│                                         ┌─────────────┐                    │
+│                                         │  Telegram   │                    │
+│                                         │  Summary    │                    │
+│                                         └─────────────┘                    │
+│                                                                             │
+│   COMPONENTS                                                                │
+│   ══════════                                                                │
+│                                                                             │
+│   ~/.openclaw/voice-calls/calls.jsonl    Raw call records (auto-generated) │
+│   wellness-calls/process-calls.sh        Shell preprocessor (efficient)    │
+│   wellness-calls/processed-calls.json    Tracks processed call IDs         │
+│   wellness-calls/transcripts/*.md        Human-readable transcripts        │
+│                                                                             │
+│   PROCESSING FREQUENCY                                                      │
+│   ════════════════════                                                      │
+│                                                                             │
+│   Cron job runs every 5 minutes, checks for new completed calls,           │
+│   generates transcripts and summaries automatically.                        │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
 ## Cost Analysis
 
 ```
@@ -1388,21 +1433,23 @@ plugins:
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                                                                             │
-│   PHASE 1: STABILITY (Current)                                             │
-│   ════════════════════════════                                             │
+│   PHASE 1: STABILITY ✅ COMPLETE                                            │
+│   ══════════════════════════════                                           │
 │   ✓ Basic call functionality                                               │
 │   ✓ Natural voice (ElevenLabs)                                             │
 │   ✓ Context-aware conversation (Claude)                                    │
 │   ✓ On-demand triggering                                                   │
-│   ○ Fix call disconnection issues                                          │
-│   ○ Improve reliability                                                    │
+│   ✓ UX best practices (latency warnings)                                   │
+│   ✓ Known limitations documented                                           │
 │                                                                             │
-│   PHASE 2: TRANSCRIPTS & LOGGING                                           │
-│   ══════════════════════════════                                           │
-│   ○ Capture call transcripts                                               │
-│   ○ Post-call summary to Telegram                                          │
-│   ○ Searchable call history                                                │
-│   ○ Sentiment analysis on responses                                        │
+│   PHASE 2: TRANSCRIPTS & LOGGING ✅ COMPLETE                                │
+│   ══════════════════════════════════════════                               │
+│   ✓ Capture call transcripts (auto-saved to markdown)                      │
+│   ✓ Post-call summary to Telegram                                          │
+│   ✓ Efficient shell-based preprocessing                                    │
+│   ✓ Cron-based automatic processing                                        │
+│   ○ Searchable call history (future)                                       │
+│   ○ Sentiment analysis on responses (future)                               │
 │                                                                             │
 │   PHASE 3: SCHEDULING & AUTOMATION                                         │
 │   ════════════════════════════════                                         │

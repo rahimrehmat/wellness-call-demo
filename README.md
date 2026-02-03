@@ -25,6 +25,8 @@ This project demonstrates how to build an AI assistant that makes outbound phone
 - **👩‍⚕️ Caring Persona** — Introduces as a community health nurse
 - **⚡ Real-Time** — Live conversation with ~3-5 second response time
 - **📱 Easy Trigger** — Start calls via Telegram, SMS, or any chat interface
+- **📝 Call Transcripts** — Automatic transcription saved to markdown files
+- **📊 Post-Call Summaries** — AI-generated summaries sent to Telegram after each call
 
 ## Architecture
 
