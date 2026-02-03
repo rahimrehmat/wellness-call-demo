@@ -2,9 +2,9 @@
 
 > AI-powered voice calls for elderly wellness checks using OpenClaw, Twilio, and ElevenLabs.
 
-**Author:** Your Name  
-**Date:** January 2026  
-**Version:** 1.0
+**Author:** Rahim Rehmat  
+**Date:** February 2026  
+**Version:** 1.1
 
 ---
 
@@ -24,8 +24,10 @@
 12. [Error Handling](#error-handling)
 13. [Configuration](#configuration)
 14. [Performance & Latency](#performance--latency)
-15. [Cost Analysis](#cost-analysis)
-16. [Future Roadmap](#future-roadmap)
+15. [User Experience Best Practices](#user-experience-best-practices)
+16. [Known Limitations](#known-limitations)
+17. [Cost Analysis](#cost-analysis)
+18. [Future Roadmap](#future-roadmap)
 
 ---
 
@@ -1120,6 +1122,11 @@ plugins:
 - **Persona:** Community health nurse doing a routine wellness check
 - **Introduction:** NEVER say "Rimpee" — always introduce as a community nurse 
                     by a human-sounding name (e.g., "Sarah")
+- **IMPORTANT - Latency Warning:** Always mention during introduction AND remind 
+                    during conversation that there will be a delay after she speaks. 
+                    Explain she needs to be patient for responses to be processed.
+                    Example: "Please note there may be a short pause after you speak 
+                    while I process your response."
 - **If something's wrong:** Message David immediately on Telegram
 ```
 
@@ -1180,6 +1187,143 @@ plugins:
 │                                                                             │
 │   Our choice rationale: Full control over persona, memory, and             │
 │   integration with existing OpenClaw assistant ecosystem.                  │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## User Experience Best Practices
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                   USER EXPERIENCE BEST PRACTICES                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│   ⚠️  CRITICAL: LATENCY WARNING FOR PATIENTS                                │
+│   ═══════════════════════════════════════════                               │
+│                                                                             │
+│   The 3-5 second response delay can confuse elderly patients who may:      │
+│   • Think the call was disconnected                                        │
+│   • Hang up before the AI responds                                         │
+│   • Become anxious or frustrated                                           │
+│   • Repeat themselves multiple times                                       │
+│                                                                             │
+│   SOLUTION: Warn patients upfront AND remind during conversation           │
+│                                                                             │
+│   ┌─────────────────────────────────────────────────────────────────────┐  │
+│   │                    INTRODUCTION SCRIPT                              │  │
+│   │                                                                     │  │
+│   │   "Hello [Name]! My name is Sarah, I'm a community health nurse.   │  │
+│   │   Your son asked me to check in on you today.                       │  │
+│   │                                                                     │  │
+│   │   Before we start, please note there may be a SHORT PAUSE after    │  │
+│   │   you speak while I process your response. Just be patient with    │  │
+│   │   me — I'm listening!"                                              │  │
+│   │                                                                     │  │
+│   └─────────────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+│   ┌─────────────────────────────────────────────────────────────────────┐  │
+│   │                    MID-CONVERSATION REMINDER                        │  │
+│   │                                                                     │  │
+│   │   If patient seems confused or repeats themselves:                  │  │
+│   │                                                                     │  │
+│   │   "I heard you, [Name] — just give me a moment to respond.         │  │
+│   │   Remember, there's a small delay on my end."                       │  │
+│   │                                                                     │  │
+│   └─────────────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+│                                                                             │
+│   ADDITIONAL UX GUIDELINES                                                 │
+│   ════════════════════════                                                 │
+│                                                                             │
+│   For Elderly Patients:                                                    │
+│   • Speak slowly and clearly (phone audio quality varies)                  │
+│   • Use their name frequently — creates connection                         │
+│   • Keep sentences short and simple                                        │
+│   • Pause between questions — don't rapid-fire                             │
+│   • Be patient with hearing difficulties                                   │
+│   • Repeat important information if needed                                 │
+│                                                                             │
+│   Persona Guidelines:                                                      │
+│   • Never reveal it's an AI unless directly asked                          │
+│   • Use a warm, professional human name (e.g., "Sarah")                    │
+│   • Maintain consistent persona across all calls                           │
+│   • Sound caring, not clinical                                             │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Known Limitations
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        KNOWN LIMITATIONS                                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│   🔴 CURRENT ISSUES                                                         │
+│   ═════════════════                                                         │
+│                                                                             │
+│   1. INITIAL MESSAGE MAY NOT PLAY                                          │
+│      ─────────────────────────────                                          │
+│      • Cause: Media stream reconnect race condition                        │
+│      • Impact: First greeting sometimes silent                             │
+│      • Workaround: AI responses after first exchange work fine             │
+│      • Status: Under investigation                                         │
+│                                                                             │
+│   2. CALLS MAY DISCONNECT PREMATURELY                                      │
+│      ──────────────────────────────────                                     │
+│      • Cause: WebSocket timeout or network instability                     │
+│      • Impact: Call ends unexpectedly mid-conversation                     │
+│      • Workaround: Retry the call                                          │
+│      • Status: Monitoring for patterns                                     │
+│                                                                             │
+│   3. NO DTMF TONE SUPPORT                                                  │
+│      ────────────────────────                                               │
+│      • Cause: Architecture doesn't support touch-tone input                │
+│      • Impact: Cannot navigate IVRs or automated phone menus               │
+│      • Workaround: Only call direct numbers (no "press 1 for...")         │
+│      • Status: Not planned (out of scope)                                  │
+│                                                                             │
+│   4. CONTEXT BLEEDING BETWEEN CALLS                                        │
+│      ───────────────────────────────                                        │
+│      • Cause: responseModel may carry conversation history                 │
+│      • Impact: AI might reference previous calls incorrectly               │
+│      • Workaround: Use isolated sessions per call                          │
+│      • Status: Needs architecture review                                   │
+│                                                                             │
+│   5. NO CALL TRANSCRIPTS                                                   │
+│      ─────────────────────                                                  │
+│      • Cause: Privacy-first design (intentional)                           │
+│      • Impact: Cannot review what was discussed                            │
+│      • Workaround: Manual post-call summary option planned                 │
+│      • Status: Future roadmap item                                         │
+│                                                                             │
+│                                                                             │
+│   🟡 INHERENT CONSTRAINTS                                                   │
+│   ═══════════════════════                                                   │
+│                                                                             │
+│   • Latency: 3-5 seconds is inherent to the STT→LLM→TTS pipeline          │
+│   • Audio quality: Depends on recipient's phone and network                │
+│   • Language: Currently English only                                       │
+│   • Concurrent calls: Limited to 1 active call at a time                   │
+│   • Tunnel dependency: ngrok URL changes on restart                        │
+│                                                                             │
+│                                                                             │
+│   🟢 LESSONS LEARNED                                                        │
+│   ══════════════════                                                        │
+│                                                                             │
+│   • Always check auth profiles if LLM responses silently fail              │
+│   • Third-party API keys (ElevenLabs) need specific permissions enabled    │
+│   • Use `2>&1` in shell commands to see all output                         │
+│   • SIGUSR1 signal reloads config without full restart                     │
+│   • Check for stuck calls with `end_call` (max 1 concurrent)               │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
